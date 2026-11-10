@@ -1,0 +1,150 @@
+/**
+ * walletya-remake · Query layer (async, build on top of Celo's lib/db/database.ts)
+ * CRUD + query agregasi untuk wallets, categories, transactions, budgets.
+ */
+import { getDb } from './database';
+
+export type WalletRow = {
+  id: number;
+  name: string;
+  balance: number;
+  icon?: string;
+  color?: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CategoryRow = {
+  id: number;
+  name: string;
+  icon: string;
+  type: 'income' | 'expense';
+  created_at: string;
+};
+
+export type TransactionRow = {
+  id: number;
+  wallet_id: number;
+  category_id: number;
+  amount: number;
+  type: 'income' | 'expense' | 'transfer';
+  description: string;
+  date: string;
+  created_at: string;
+  updated_at: string;
+};
+
+/* ---------- Wallets ---------- */
+export async function listWallets(): Promise<WalletRow[]> {
+  const db = await getDb();
+  return db.getAllAsync<WalletRow>('SELECT * FROM wallets ORDER BY name ASC');
+}
+
+export async function createWallet(name: string): Promise<number> {
+  const db = await getDb();
+  const result = await db.runAsync('INSERT INTO wallets (name) VALUES (?)', name);
+  return result.lastInsertRowId;
+}
+
+/* ---------- Categories ---------- */
+export async function listCategories(type?: 'income' | 'expense'): Promise<CategoryRow[]> {
+  const db = await getDb();
+  if (type) {
+    return db.getAllAsync<CategoryRow>(
+      'SELECT * FROM categories WHERE type = ? ORDER BY name ASC',
+      type
+    );
+  }
+  return db.getAllAsync<CategoryRow>('SELECT * FROM categories ORDER BY type, name ASC');
+}
+
+export async function createCategory(
+  name: string,
+  icon: string,
+  type: 'income' | 'expense'
+): Promise<number> {
+  const db = await getDb();
+  const result = await db.runAsync(
+    'INSERT INTO categories (name, icon, type) VALUES (?, ?, ?)',
+    name,
+    icon,
+    type
+  );
+  return result.lastInsertRowId;
+}
+
+/* ---------- Transactions ---------- */
+export async function createTransaction(tx: {
+  wallet_id: number;
+  category_id: number;
+  amount: number;
+  type: 'income' | 'expense' | 'transfer';
+  description?: string;
+  date: string;
+}): Promise<number> {
+  const db = await getDb();
+  const result = await db.runAsync(
+    `INSERT INTO transactions (wallet_id, category_id, amount, type, description, date)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    tx.wallet_id,
+    tx.category_id,
+    tx.amount,
+    tx.type,
+    tx.description ?? '',
+    tx.date
+  );
+  return result.lastInsertRowId;
+}
+
+export async function listRecentTransactions(limit = 10): Promise<TransactionRow[]> {
+  const db = await getDb();
+  return db.getAllAsync<TransactionRow>(
+    `SELECT * FROM transactions ORDER BY date DESC, created_at DESC LIMIT ?`,
+    limit
+  );
+}
+
+/* ---------- Aggregation ---------- */
+export type MonthlyCashflow = {
+  month: string;
+  wallet_id: number;
+  total_income: number;
+  total_expense: number;
+  net_balance: number;
+};
+
+export async function getMonthlyCashflow(
+  month?: number,
+  year?: number
+): Promise<MonthlyCashflow[]> {
+  const db = await getDb();
+  const params: Array<string> = [];
+  let where = '';
+  if (month !== undefined && year !== undefined) {
+    where = `WHERE strftime('%Y', date) = ? AND strftime('%m', date) = ?`;
+    params.push(String(year), String(month).padStart(2, '0'));
+  }
+  return db.getAllAsync<MonthlyCashflow>(
+    `SELECT
+       strftime('%Y-%m', date) AS month,
+       wallet_id,
+       SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS total_income,
+       SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS total_expense,
+       SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END) AS net_balance
+     FROM transactions
+     ${where}
+     GROUP BY strftime('%Y-%m', date), wallet_id
+     ORDER BY month DESC, wallet_id`,
+    ...params
+  );
+}
+
+export async function getTotalNetBalance(): Promise<number> {
+  const db = await getDb();
+  const result = await db.getAllAsync<{ total: number }>(
+    `SELECT
+       SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END) AS total
+     FROM transactions`
+  );
+  return result[0]?.total ?? 0;
+}
