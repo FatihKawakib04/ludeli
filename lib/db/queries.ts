@@ -81,6 +81,7 @@ export async function createTransaction(tx: {
   type: 'income' | 'expense' | 'transfer';
   description?: string;
   date: string;
+  to_wallet_id?: number; // required for transfer
 }): Promise<number> {
   const db = await getDb();
   const result = await db.runAsync(
@@ -95,12 +96,35 @@ export async function createTransaction(tx: {
   );
   
   // Update wallet balance based on transaction type
-  const balanceChange = tx.type === 'income' ? tx.amount : -tx.amount;
-  await db.runAsync(
-    'UPDATE wallets SET balance = balance + ?, updated_at = current_timestamp WHERE id = ?',
-    balanceChange,
-    tx.wallet_id
-  );
+  if (tx.type === 'transfer') {
+    if (!tx.to_wallet_id) {
+      throw new Error('Transfer requires to_wallet_id');
+    }
+    // Debit wallet asal
+    await db.runAsync(
+      'UPDATE wallets SET balance = balance - ?, updated_at = current_timestamp WHERE id = ?',
+      tx.amount,
+      tx.wallet_id
+    );
+    // Credit wallet tujuan
+    await db.runAsync(
+      'UPDATE wallets SET balance = balance + ?, updated_at = current_timestamp WHERE id = ?',
+      tx.amount,
+      tx.to_wallet_id
+    );
+  } else if (tx.type === 'income') {
+    await db.runAsync(
+      'UPDATE wallets SET balance = balance + ?, updated_at = current_timestamp WHERE id = ?',
+      tx.amount,
+      tx.wallet_id
+    );
+  } else if (tx.type === 'expense') {
+    await db.runAsync(
+      'UPDATE wallets SET balance = balance - ?, updated_at = current_timestamp WHERE id = ?',
+      tx.amount,
+      tx.wallet_id
+    );
+  }
   
   return result.lastInsertRowId;
 }
