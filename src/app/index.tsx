@@ -14,8 +14,6 @@ import {
   useTransactionsStore,
 } from '../services/transactions';
 import type { TransactionRow } from '../../lib/db/queries';
-import { getWalletsWithBalance } from '../services/wallets';
-import { getDashboardData } from '../services/dashboard';
 import { seedDefaultWallets, seedDefaultCategories } from '../services/wallets';
 
 type RecentTx = TransactionRow & { categoryName?: string };

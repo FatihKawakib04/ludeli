@@ -93,6 +93,15 @@ export async function createTransaction(tx: {
     tx.description ?? '',
     tx.date
   );
+  
+  // Update wallet balance based on transaction type
+  const balanceChange = tx.type === 'income' ? tx.amount : -tx.amount;
+  await db.runAsync(
+    'UPDATE wallets SET balance = balance + ?, updated_at = current_timestamp WHERE id = ?',
+    balanceChange,
+    tx.wallet_id
+  );
+  
   return result.lastInsertRowId;
 }
 
@@ -121,7 +130,7 @@ export async function getMonthlyCashflow(
   const params: Array<string> = [];
   let where = '';
   if (month !== undefined && year !== undefined) {
-    where = `WHERE strftime('%Y', date) = ? AND strftime('%m', date) = ?`;
+    where = `WHERE strftime('%Y', date) = ? AND strftime('%m', date) = ? AND type IN ('income', 'expense')`;
     params.push(String(year), String(month).padStart(2, '0'));
   }
   return db.getAllAsync<MonthlyCashflow>(
@@ -132,6 +141,7 @@ export async function getMonthlyCashflow(
        SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS total_expense,
        SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END) AS net_balance
      FROM transactions
+     WHERE type IN ('income', 'expense')
      ${where}
      GROUP BY strftime('%Y-%m', date), wallet_id
      ORDER BY month DESC, wallet_id`,
@@ -143,8 +153,11 @@ export async function getTotalNetBalance(): Promise<number> {
   const db = await getDb();
   const result = await db.getAllAsync<{ total: number }>(
     `SELECT
-       SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END) AS total
-     FROM transactions`
+       SUM(CASE WHEN type = 'income' THEN amount
+                WHEN type = 'expense' THEN -amount
+                ELSE 0 END) AS total
+     FROM transactions
+     WHERE type IN ('income', 'expense')`
   );
   return result[0]?.total ?? 0;
 }
