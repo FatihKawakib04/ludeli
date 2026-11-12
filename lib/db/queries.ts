@@ -152,9 +152,9 @@ export async function getMonthlyCashflow(
 ): Promise<MonthlyCashflow[]> {
   const db = await getDb();
   const params: Array<string> = [];
-  let where = '';
+  let where = `WHERE type IN ('income', 'expense')`;
   if (month !== undefined && year !== undefined) {
-    where = `WHERE strftime('%Y', date) = ? AND strftime('%m', date) = ? AND type IN ('income', 'expense')`;
+    where += ` AND strftime('%Y', date) = ? AND strftime('%m', date) = ?`;
     params.push(String(year), String(month).padStart(2, '0'));
   }
   return db.getAllAsync<MonthlyCashflow>(
@@ -165,7 +165,6 @@ export async function getMonthlyCashflow(
        SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS total_expense,
        SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END) AS net_balance
      FROM transactions
-     WHERE type IN ('income', 'expense')
      ${where}
      GROUP BY strftime('%Y-%m', date), wallet_id
      ORDER BY month DESC, wallet_id`,
