@@ -84,49 +84,58 @@ export async function createTransaction(tx: {
   to_wallet_id?: number; // required for transfer
 }): Promise<number> {
   const db = await getDb();
-  const result = await db.runAsync(
-    `INSERT INTO transactions (wallet_id, category_id, amount, type, description, date)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    tx.wallet_id,
-    tx.category_id,
-    tx.amount,
-    tx.type,
-    tx.description ?? '',
-    tx.date
-  );
-  
-  // Update wallet balance based on transaction type
-  if (tx.type === 'transfer') {
-    if (!tx.to_wallet_id) {
-      throw new Error('Transfer requires to_wallet_id');
+  let insertedId: number | null = null;
+
+  await db.withTransactionAsync(async () => {
+    const result = await db.runAsync(
+      `INSERT INTO transactions (wallet_id, category_id, amount, type, description, date)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      tx.wallet_id,
+      tx.category_id,
+      tx.amount,
+      tx.type,
+      tx.description ?? '',
+      tx.date
+    );
+    insertedId = result.lastInsertRowId;
+
+    // Update wallet balance based on transaction type
+    if (tx.type === 'transfer') {
+      if (!tx.to_wallet_id) {
+        throw new Error('Transfer requires to_wallet_id');
+      }
+      // Debit wallet asal
+      await db.runAsync(
+        'UPDATE wallets SET balance = balance - ?, updated_at = current_timestamp WHERE id = ?',
+        tx.amount,
+        tx.wallet_id
+      );
+      // Credit wallet tujuan
+      await db.runAsync(
+        'UPDATE wallets SET balance = balance + ?, updated_at = current_timestamp WHERE id = ?',
+        tx.amount,
+        tx.to_wallet_id
+      );
+    } else if (tx.type === 'income') {
+      await db.runAsync(
+        'UPDATE wallets SET balance = balance + ?, updated_at = current_timestamp WHERE id = ?',
+        tx.amount,
+        tx.wallet_id
+      );
+    } else if (tx.type === 'expense') {
+      await db.runAsync(
+        'UPDATE wallets SET balance = balance - ?, updated_at = current_timestamp WHERE id = ?',
+        tx.amount,
+        tx.wallet_id
+      );
     }
-    // Debit wallet asal
-    await db.runAsync(
-      'UPDATE wallets SET balance = balance - ?, updated_at = current_timestamp WHERE id = ?',
-      tx.amount,
-      tx.wallet_id
-    );
-    // Credit wallet tujuan
-    await db.runAsync(
-      'UPDATE wallets SET balance = balance + ?, updated_at = current_timestamp WHERE id = ?',
-      tx.amount,
-      tx.to_wallet_id
-    );
-  } else if (tx.type === 'income') {
-    await db.runAsync(
-      'UPDATE wallets SET balance = balance + ?, updated_at = current_timestamp WHERE id = ?',
-      tx.amount,
-      tx.wallet_id
-    );
-  } else if (tx.type === 'expense') {
-    await db.runAsync(
-      'UPDATE wallets SET balance = balance - ?, updated_at = current_timestamp WHERE id = ?',
-      tx.amount,
-      tx.wallet_id
-    );
+  });
+
+  if (insertedId === null) {
+    throw new Error('Transaction insert failed');
   }
-  
-  return result.lastInsertRowId;
+
+  return insertedId;
 }
 
 export async function listRecentTransactions(limit = 10): Promise<TransactionRow[]> {
