@@ -10,7 +10,7 @@ Commit terbaru: `bcf43c8` (authorship rewrite — identitas Fatih Kawakib Karton
 
 ## [STATUS] Ringkasan Proyek
 
-[STATUS] Celo | Autentikasi GitHub persisten terverifikasi, integration test 23/23 PASS, dokumen dan test di-commit | Tidak ada | Menunggu Felo Final ACC dan laporan deployment readiness
+[STATUS] Celo | EAS JSON + export/backup DB + resetDb guard + wallet_transfers fix + init error handling selesai | tsc EXIT 0, integration test 23/23 PASS | 3 commit lokal belum di-push (push butuh ACC Fatih) | EAS Build belum dijalankan (butuh expo.dev account + eas-cli, VPS 1 GB RAM tidak cukup) | Menunggu Felo laporan final
 
 ---
 
@@ -20,8 +20,8 @@ Commit terbaru: `bcf43c8` (authorship rewrite — identitas Fatih Kawakib Karton
 |------|-------|
 | Repository | https://github.com/FatihKawakib04/ludeli |
 | Branch | master |
-| HEAD lokal | `bcf43c8704e86db69f11c08651e655cffcc6c14c` |
-| origin/master | `bcf43c8704e86db69f11c08651e655cffcc6c14c` (sama dengan HEAD lokal — diverifikasi) |
+| HEAD lokal | `407cca7...` (3 commit di atas `7a9a6e9`, belum di-push) |
+| origin/master | `7a9a6e9ac34bee92f3b76bdb7112c38de28a1e32` (belum di-sinkronkan — push butuh ACC Fatih) |
 | `git status` | Clean |
 | Jumlah commit | 8 commit |
 | Authorship | Semua 8 commit: Fatih Kawakib Kartono <128587610+FatihKawakib04@users.noreply.github.com> |
@@ -90,6 +90,8 @@ Commit terbaru: `bcf43c8` (authorship rewrite — identitas Fatih Kawakib Karton
 
 ## 6. Langkah Berikutnya
 
+- EAS Build: belum dijalankan (BLOCKER/UNKNOWN — butuh expo.dev account dan eas-cli; VPS 1 GB RAM tidak cukup untuk build native lokal). `eas.json` sudah dibuat (development/preview/production), menunggu ACC Fatih untuk mencoba build cloud.
+- Push 3 commit lokal ke origin/master: butuh ACC Fatih (tidak boleh push tanpa ACC).
 - Felo memberikan Final ACC dan laporan deployment readiness.
 - Standby untuk perbaikan jika ditemukan masalah konkret baru.
 - Jangan deploy tanpa ACC Fatih.
