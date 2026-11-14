@@ -86,6 +86,20 @@ export async function createTransaction(tx: {
   const db = await getDb();
   let insertedId: number | null = null;
 
+  // Validasi input sebelum apapun ditulis ke database
+  if (!tx.amount || tx.amount <= 0) {
+    throw new Error('Amount harus lebih besar dari 0');
+  }
+
+  if (tx.type === 'transfer') {
+    if (!tx.to_wallet_id) {
+      throw new Error('Transfer requires to_wallet_id');
+    }
+    if (tx.to_wallet_id === tx.wallet_id) {
+      throw new Error('Wallet asal dan tujuan harus berbeda');
+    }
+  }
+
   await db.withTransactionAsync(async () => {
     const result = await db.runAsync(
       `INSERT INTO transactions (wallet_id, category_id, amount, type, description, date)
@@ -99,11 +113,16 @@ export async function createTransaction(tx: {
     );
     insertedId = result.lastInsertRowId;
 
-    // Update wallet balance based on transaction type
+    // Update saldo dompet berdasarkan tipe transaksi
     if (tx.type === 'transfer') {
-      if (!tx.to_wallet_id) {
-        throw new Error('Transfer requires to_wallet_id');
-      }
+      // Catat transfer ke wallet_transfers (audit trail, tidak dihitung dalam cashflow)
+      await db.runAsync(
+        'INSERT INTO wallet_transfers (from_wallet_id, to_wallet_id, amount, date) VALUES (?, ?, ?, ?)',
+        tx.wallet_id,
+        tx.to_wallet_id!,
+        tx.amount,
+        tx.date
+      );
       // Debit wallet asal
       await db.runAsync(
         'UPDATE wallets SET balance = balance - ?, updated_at = current_timestamp WHERE id = ?',
@@ -114,7 +133,7 @@ export async function createTransaction(tx: {
       await db.runAsync(
         'UPDATE wallets SET balance = balance + ?, updated_at = current_timestamp WHERE id = ?',
         tx.amount,
-        tx.to_wallet_id
+        tx.to_wallet_id!
       );
     } else if (tx.type === 'income') {
       await db.runAsync(
