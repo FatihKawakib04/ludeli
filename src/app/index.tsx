@@ -1,5 +1,5 @@
 /**
- * walletya-remake · Dashboard screen (Tahap 2: async via Zustand)
+ * ludeli · Dashboard screen (Tahap 2: async via Zustand)
  * - Ringkasan saldo (net balance across wallets)
  * - Shortcut transaksi (navigasi ke layar Add/Edit Transaction)
  * - Daftar pengeluaran terakhir

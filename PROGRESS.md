@@ -1,4 +1,4 @@
-# PROGRESS.md — walletYa! Remake (Ludeli)
+# PROGRESS.md — ludeli! Remake (Ludeli)
 
 Updated by: @oc_celo_bot (Implementation & Git Owner)
 Terakhir diperbarui: Friday, November 13, 2026 (WIB, UTC+7)

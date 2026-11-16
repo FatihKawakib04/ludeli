@@ -1,4 +1,4 @@
-# walletYa! Remake — Technical Spec (Draft)
+# ludeli! Remake — Technical Spec (Draft)
 
 ## Stack
 - Expo SDK 56 + Expo Router (file-based routing)

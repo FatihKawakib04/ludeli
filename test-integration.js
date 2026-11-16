@@ -1,5 +1,5 @@
 /**
- * Integration Test - walletya-remake
+ * Integration Test - ludeli
  * Calls createTransaction() from lib/db/queries.ts directly (via mocked expo-sqlite)
  * Tests: seed, income, expense, transfer, balance verification, error handling, rollback
  */
@@ -8,7 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const Database = require('better-sqlite3');
 
-const DB_PATH = path.join(__dirname, '.hermes-test', 'integration-walletya.db');
+const DB_PATH = path.join(__dirname, '.hermes-test', 'integration-ludeli.db');
 fs.mkdirSync(path.join(__dirname, '.hermes-test'), { recursive: true });
 if (fs.existsSync(DB_PATH)) fs.unlinkSync(DB_PATH);
 

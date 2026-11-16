@@ -1,4 +1,4 @@
-# walletYa! Remake — Database Schema (from APK reverse-engineering)
+# ludeli! Remake — Database Schema (from APK reverse-engineering)
 
 Source: `extracted/assets/index.android.bundle` (React Native + Expo + SQLite).
 

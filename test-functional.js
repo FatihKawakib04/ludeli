@@ -1,12 +1,12 @@
 /**
- * Functional Test Script - walletya-remake
+ * Functional Test Script - ludeli
  * Test scenario: seed, income, expense, transfer, balance verification
  */
 const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 
-const DB_PATH = path.join(__dirname, 'test-walletya.db');
+const DB_PATH = path.join(__dirname, 'test-ludeli.db');
 
 // Clean start
 if (fs.existsSync(DB_PATH)) fs.unlinkSync(DB_PATH);

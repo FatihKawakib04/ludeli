@@ -1,5 +1,5 @@
 /**
- * walletya-remake · Query layer (async, build on top of Celo's lib/db/database.ts)
+ * ludeli · Query layer (async, build on top of Celo's lib/db/database.ts)
  * CRUD + query agregasi untuk wallets, categories, transactions, budgets.
  */
 import { getDb } from './database';

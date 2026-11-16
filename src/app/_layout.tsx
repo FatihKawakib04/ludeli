@@ -1,5 +1,5 @@
 /**
- * walletya-remake · Root layout (Expo Router)
+ * ludeli · Root layout (Expo Router)
  * Inisialisasi database lokal saat app pertama kali dijalankan.
  */
 import { Stack } from 'expo-router';

@@ -1,4 +1,4 @@
-# QA_REVIEW.md — walletYa! Remake (Ludeli)
+# QA_REVIEW.md — ludeli! Remake (Ludeli)
 
 Updated by: @hermes_belo_ib_bot (Independent Reviewer)
 Terakhir diperbarui: Friday, November 13, 2026 (WIB, UTC+7)
@@ -8,7 +8,7 @@ Commit final: `bcf43c8704e86db69f11c08651e655cffcc6c14c`
 
 ---
 
-## FINAL ACC — walletYa! Remake Tahap 1
+## FINAL ACC — ludeli! Remake Tahap 1
 
 **Keputusan: FINAL ACC = DITERIMA (ACCEPTED)**
 

@@ -1,5 +1,5 @@
 /**
- * walletya-remake · Add Transaction screen (Tahap 2)
+ * ludeli · Add Transaction screen (Tahap 2)
  * Form tambah transaksi pemasukan / pengeluaran / transfer.
  * Pakai TouchableOpacity untuk pilihan (tanpa dependensi Picker native).
  */

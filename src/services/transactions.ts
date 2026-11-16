@@ -1,5 +1,5 @@
 /**
- * walletya-remake · Transaction service (Zustand store)
+ * ludeli · Transaction service (Zustand store)
  * Layer atas lib/db/queries untuk operasi transaksi dengan state async.
  */
 import { create } from 'zustand';

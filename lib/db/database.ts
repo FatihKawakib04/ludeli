@@ -10,7 +10,7 @@ export async function getDb(): Promise<SQLite.SQLiteDatabase> {
   if (dbInstance) return dbInstance;
   if (initError) throw initError;
   try {
-    dbInstance = await SQLite.openDatabaseAsync('walletya.db');
+    dbInstance = await SQLite.openDatabaseAsync('ludeli.db');
     await dbInstance.execAsync('PRAGMA foreign_keys = ON;');
     await dbInstance.execAsync('PRAGMA integrity_check;');
     await dbInstance.execAsync(SCHEMA_SQL);
@@ -34,7 +34,7 @@ export async function resetDb(): Promise<void> {
     dbInstance = null;
     initError = null;
   }
-  await SQLite.deleteDatabaseAsync('walletya.db');
+  await SQLite.deleteDatabaseAsync('ludeli.db');
 }
 
 /** Ekspor semua data ke JSON untuk backup manual (lokal-first). Hasil string bisa disimpan ke file melalui FileSystem. */

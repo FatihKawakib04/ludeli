@@ -1,5 +1,5 @@
 /**
- * walletya-remake · Dashboard aggregation helper (T2-02)
+ * ludeli · Dashboard aggregation helper (T2-02)
  * Menggabungkan saldo total, cashflow bulanan, dan transaksi terbaru.
  */
 import {

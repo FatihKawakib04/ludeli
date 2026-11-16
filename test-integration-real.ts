@@ -1,6 +1,6 @@
 /**
  * test-integration-real.ts
- * Integration test walletya-remake yang memanggil createTransaction() dari implementasi aktual
+ * Integration test ludeli yang memanggil createTransaction() dari implementasi aktual
  * (lib/db/queries.ts), TIDAK menggunakan raw SQL.
  * Harus dijalankan di environment Expo/React Native (expo-sqlite native module).
  *

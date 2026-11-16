@@ -1,5 +1,5 @@
 /**
- * walletya-remake · Wallet service (Zustand store)
+ * ludeli · Wallet service (Zustand store)
  * Layer atas lib/db/queries untuk operasi dompet dengan state async.
  */
 import { create } from 'zustand';

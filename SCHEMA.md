@@ -1,7 +1,7 @@
-# SCHEMA.md — walletYa! Remake (Tahap 1)
+# SCHEMA.md — ludeli! Remake (Tahap 1)
 
 > Dokumen spesifikasi skema database SQLite lokal.  
-> Sumber: artefak reverse-engineering APK walletYa! (bundle strings `index.android.bundle`) + implementasi Celo di `lib/db/schema.ts`.  
+> Sumber: artefak reverse-engineering APK ludeli! (bundle strings `index.android.bundle`) + implementasi Celo di `lib/db/schema.ts`.  
 > Disiapkan untuk review oleh @hermes_felo_bot.
 
 ## 1. Diagram Entitas (Ringkasan)

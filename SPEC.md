@@ -1,10 +1,10 @@
-# SPEC.md — walletYa! Remake (Tahap 1)
+# SPEC.md — ludeli! Remake (Tahap 1)
 
-> Dokumen spesifikasi teknis untuk rebuild aplikasi personal finance dari artefak APK walletYa! (Expo SDK 56/58 + Expo Router + SQLite).  
+> Dokumen spesifikasi teknis untuk rebuild aplikasi personal finance dari artefak APK ludeli! (Expo SDK 56/58 + Expo Router + SQLite).  
 > Disiapkan untuk review oleh @hermes_felo_bot (Arsitektur & QA). Implementasi oleh @hermes_belo_ib_bot (Core Implementation).
 
 ## 1. Latar Belakang
-Aplikasi walletYa! asli (React Native + Expo SDK 56 + SQLite) akan direbuild ulang menjadi aplikasi personal finance yang bersih, modern, dan modular. Tujuan Tahap 1: struktur direktori scaffold Expo, skema database SQLite lokal fungsional, dan 1 halaman Dashboard mockup siap uji.
+Aplikasi ludeli! asli (React Native + Expo SDK 56 + SQLite) akan direbuild ulang menjadi aplikasi personal finance yang bersih, modern, dan modular. Tujuan Tahap 1: struktur direktori scaffold Expo, skema database SQLite lokal fungsional, dan 1 halaman Dashboard mockup siap uji.
 
 ## 2. Non-Fungsional Requirements
 | Aspek | Spesifikasi |
@@ -16,7 +16,7 @@ Aplikasi walletYa! asli (React Native + Expo SDK 56 + SQLite) akan direbuild ula
 | Database | expo-sqlite (async API: `openDatabaseAsync`, `getAllAsync`, `runAsync`) |
 | Navigasi | Expo Router typedRoutes, file-based routing di `src/app/` |
 | Build | Tidak di-build di VPS Felo (1 GB RAM). Build di VM Instabox (4 vCPU / 8 GB RAM) |
-| Tempat kerja | `/data/home/.openclaw/workspace/projects/walletya-remake/` (shared VM) |
+| Tempat kerja | `/data/home/.openclaw/workspace/projects/ludeli/` (shared VM) |
 
 ## 3. Fitur Tahap 1
 | ID | Fitur | Deskripsi | Owner |
@@ -29,7 +29,7 @@ Aplikasi walletYa! asli (React Native + Expo SDK 56 + SQLite) akan direbuild ula
 
 ## 4. Arsitektur Folder (sasaran)
 ```
-walletya-remake/
+ludeli/
 ├── src/
 │   ├── app/                 # Expo Router routes (semua file = screen)
 │   │   ├── _layout.tsx      # Root layout + DB init
@@ -47,7 +47,7 @@ walletya-remake/
 ```
 
 ## 5. Alur Data (Dashboard)
-1. App mulai → `_layout.tsx` memanggil `getDb()` (membuka `walletya.db` + menjalankan `SCHEMA_SQL`)
+1. App mulai → `_layout.tsx` memanggil `getDb()` (membuka `ludeli.db` + menjalankan `SCHEMA_SQL`)
 2. `index.tsx` (Dashboard) memuat:
    - `listWallets()` → hitung jumlah dompet aktif
    - `getTotalNetBalance()` → jumlah semua transaksi (income − expense)
