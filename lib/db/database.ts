@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite';
+import * as FileSystem from 'expo-file-system';
 import { SCHEMA_SQL } from './schema';
 
 declare const __DEV__: boolean;
@@ -10,6 +11,14 @@ export async function getDb(): Promise<SQLite.SQLiteDatabase> {
   if (dbInstance) return dbInstance;
   if (initError) throw initError;
   try {
+    // Migration: copy walletya.db -> ludeli.db once if old DB exists
+    const oldDbPath = `${FileSystem.documentDirectory}walletya.db`;
+    const newDbPath = `${FileSystem.documentDirectory}ludeli.db`;
+    const oldDbExists = await FileSystem.getInfoAsync(oldDbPath);
+    const newDbExists = await FileSystem.getInfoAsync(newDbPath);
+    if (oldDbExists.exists && !newDbExists.exists) {
+      await FileSystem.copyAsync({ from: oldDbPath, to: newDbPath });
+    }
     dbInstance = await SQLite.openDatabaseAsync('ludeli.db');
     await dbInstance.execAsync('PRAGMA foreign_keys = ON;');
     await dbInstance.execAsync('PRAGMA integrity_check;');
